@@ -24,7 +24,7 @@ public class Iteration2Run {
 	//long runtime;
 	private PrintWriter TFile;
 	private PrintWriter linkflowFile;
-	private PrintWriter sFile; /*S-expect value*/
+	private PrintWriter sFile; /*S-expect value */
 		
 	public static void main(String[] args) {
 		Iteration2Run iteration2run = new Iteration2Run();
