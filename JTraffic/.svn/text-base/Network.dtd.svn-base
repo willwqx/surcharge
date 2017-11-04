@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT Network (FlowModel+,CostModel,Link+)>
+<!ATTLIST Network
+ numberOfZones CDATA
+ numberOfNodes CDATA #REQUIRED
+ firstThroughNode CDATA
+ numberOfLinks CDATA #REQUIRED
+>
+<!ELEMENT Link>
+<!-- Link travel time = free flow time * ( 1 + B * (flow/capacity)^Power ).
+
+Link generalized cost = Link travel time + toll_factor * toll + distance_factor * distance
+
+ -->
+<!ELEMENT FlowModel>
+<!ATTLIST Link
+ initNode 		CDATA #REQUIRED
+ termNode 		CDATA #REQUIRED 
+ capacity 		CDATA #REQUIRED
+ length			CDATA #REQUIRED
+ freeFlowTime 	CDATA	#REQUIRED
+ flowModel		IDREF(FlowModel)
+>
+<!ATTLIST FlowModel
+	id			ID #REQUIRED
+	B 			CDATA #REQUIRED
+	power 		CDATA #REQUIRED
+	speedLimit	CDATA #REQUIRED
+	toll		CDATA #REQUIRED
+	type 		CDATA #REQUIRED
+>

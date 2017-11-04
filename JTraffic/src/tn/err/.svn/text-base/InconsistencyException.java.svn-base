@@ -1,0 +1,32 @@
+package tn.err;
+
+import tn.Network;
+import tn.ODPair;
+
+public class InconsistencyException extends Exception{
+
+	private static final long serialVersionUID = -5093234821090794904L;
+	
+	private Network network;
+	private Object obj;
+	
+	public InconsistencyException(Network network, Object obj){
+		this.network = network;
+		this.obj =  obj;
+	}
+	
+	private static final String errorMessage = "Inconsistent network object.\nAn object must be handled by the same network that constructed it.\n";
+	
+	@Override
+	public String getMessage() {
+		return String.format(errorMessage);
+	}
+
+	private static final String objectID = "Inconsistency Exception()";
+	
+	@Override
+	public String toString() {
+		return String.format(objectID);
+	}		
+
+}

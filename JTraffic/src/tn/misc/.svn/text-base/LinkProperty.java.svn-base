@@ -1,0 +1,58 @@
+package tn.misc;
+
+import java.util.Set;
+
+import tn.Network;
+
+public abstract class LinkProperty<T> extends LinkReadOnlyProperty<T> {
+	
+	public LinkProperty(LinkReadOnlyProperty<T> other) {
+		super(other);
+	}
+
+	public LinkProperty(Network network, LinkReadOnlyProperty<T> other) {
+		super(network, other);
+	}
+
+	public LinkProperty(String name, Network network, T defaultValue) {
+		super(name, network, defaultValue);
+	}
+
+	/**Set the value of the property for the given linkId to the given value
+	 * @param linkId
+	 * @param value
+	 */
+	public abstract void set(int linkId, T value);
+	
+	/**Reset the value of the property for all links to its default value
+	 */
+	public void reset(){
+		for(int linkId: network.getLinks()){
+			set(linkId, defaultValue);
+		}
+	}
+	
+	/**Set the value of the property corresponding to the given
+	 * set of link indexes in the keySet to the given value.
+	 * @param linkIdSet set of linkIds to update
+	 * @param value new value of property
+	 */
+	public void set(Set<Integer>linkIdSet, T value){
+		for(Integer linkId: linkIdSet){
+			set(linkId, value);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see tn.misc.LinkReadOnlyProperty#clone()
+	 */
+	@Override
+	public abstract LinkProperty<T> clone();
+
+	/* (non-Javadoc)
+	 * @see tn.misc.LinkReadOnlyProperty#clone(tn.Network)
+	 */
+	@Override
+	public abstract LinkProperty<T> clone(Network network);	
+	
+}

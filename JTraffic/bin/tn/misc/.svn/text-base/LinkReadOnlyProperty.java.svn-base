@@ -1,0 +1,103 @@
+package tn.misc;
+
+import tn.Network;
+
+public abstract class LinkReadOnlyProperty<T> {
+	/**
+	 * Default value of the link property
+	 */
+	final protected T defaultValue;
+	
+	/**
+	 * the network object with which the property is associated 
+	 */
+	final protected Network network;
+	
+	/**
+	 * Property name
+	 */
+	final protected String name;
+
+	/**Initialize {@link LinkProperty} object
+	 * @param network the network object with which the property is associated 
+	 * @param j	the default value of link property
+	 */
+	public LinkReadOnlyProperty(String name, Network network, T defaultValue) {
+		this.network = network;
+		this.defaultValue = defaultValue;
+		this.name = name;
+		network.addLinkProperty(name, this);
+	}
+	
+	/**Copy constructor
+	 * @param other source object to copy from
+	 */
+	public LinkReadOnlyProperty(LinkReadOnlyProperty<T> other){
+		this.network = other.network;
+		this.defaultValue = other.defaultValue;
+		this.name = other.name;
+	}
+	
+	public LinkReadOnlyProperty(Network network, LinkReadOnlyProperty<T> other) {
+		this.network = network;
+		this.defaultValue = other.defaultValue;
+		this.name = other.name;
+	}
+
+	/**Get the value of the link property for the given linkId
+	 * @param linkId index of the link to inspect
+	 * @return the value of the link property corresponding to linkId
+	 */
+	public abstract T get(int linkId);
+	
+	/**
+	 * @return the network
+	 */
+	public Network getNetwork() {
+		return network;
+	}
+	
+	/**
+	 * @return the property name
+	 */
+	public String getName(){
+		return name;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public LinkReadOnlyProperty<T> clone (){
+		return this;
+	}
+	
+	/**Clone for association with a different network
+	 * @param network the other network
+	 * @return a clone associated with the given network
+	 */
+	public abstract LinkReadOnlyProperty<T> clone(Network network);
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(int i:network.getLinks()){
+			sb.append(String.format("#%d\t%s\n", i, get(i).toString()));
+		}
+		return sb.toString();
+	}
+	
+	/**Calculate the sum of the property value for all links
+	 * property value type must be convertible to Double
+	 * @return total
+	 */
+	public double getSum(){
+		double sum = 0.0;
+		for(int i:network.getLinks()){
+			sum +=(Double) get(i);
+		}
+		return sum;
+	}
+}

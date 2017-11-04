@@ -1,0 +1,132 @@
+package tn.io;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import tn.FlowModel;
+import tn.TrafficNetwork;
+import tn.ODPair;
+import tn.PolynomialFlowModel;
+import tn.Demand;
+import tn.err.*;
+
+public class NetworkReader {
+	
+	private String fileName;
+	private FileReader inputFile;
+	private LineNumberScanner is;
+	private TrafficNetwork network;
+	
+	/*
+	 * Open a text file for reading network topology and/or demand
+	 * 
+	 * fileName: file to open
+	 */
+	public NetworkReader(String fileName) throws FileNotFoundException{
+		this.fileName = fileName;
+		inputFile = new FileReader(fileName);
+		is = new LineNumberScanner(inputFile);		
+	}
+	
+	/*
+	 * read network topology, i.e. links and link properties
+	 */
+	public TrafficNetwork readTopology() throws InvalidInputException{
+		network = null;
+		
+		try{
+			//Read network specifications
+			//Number of zones
+			int zoneCount = is.nextInt();
+			
+			//Number of nodes
+			int nodeCount = is.nextInt();
+
+			//First through node
+			//TODO: handle non-through nodes
+			@SuppressWarnings("unused")
+			int firstThroughNode = is.nextInt();
+			
+			//read number of links
+			int linkCount = is.nextInt();						
+
+			//construct network
+			network = new TrafficNetwork(nodeCount, zoneCount, linkCount);
+
+			//read and construct links			
+			for(int i=0; i<linkCount; i++){
+				int 	from = is.nextInt();
+				int 	to = is.nextInt();
+				double 	capacity = is.nextDouble();
+				double 	distance = is.nextDouble();
+				double 	travelTime = is.nextDouble();
+				double 	B = is.nextDouble();
+				double 	power = is.nextDouble();
+				double 	speed=is.nextDouble();
+				double 	toll = is.nextDouble();
+				int 	linkType = is.nextInt();
+				
+				//FlowModel flowModel = new PolynomialFlowModel(B, power).new WithCutoff();
+				FlowModel flowModel = new PolynomialFlowModel(B, power);
+				
+				network.addLink(from, to, capacity, distance, travelTime, speed, toll, linkType, flowModel);
+			}
+			
+			return network;
+			
+		}
+		catch(Exception e){
+			
+			throw new InvalidInputException(fileName, is.getLineNumber(), e);
+			
+		}
+	}
+	/*
+	 * network: network topology for the reader to assign demand to 
+	 */
+	public void readDemand(TrafficNetwork network)throws InvalidInputException{
+		this.network = network;
+		readDemand();
+	}
+	
+	/**Reads demand from the input file.
+	 * @return Demand object that maps O-D pairs and their corresponding demand 
+	 * @throws InvalidInputException
+	 */
+	public Demand readDemand() throws InvalidInputException{
+		if(network==null){
+			throw new NullPointerException("Can't read demand because network topology is null!\nYou must first call readTopology or call setTopology with a valid Network object.");
+		}
+				
+		try {
+			int srcCount = is.nextInt();
+			@SuppressWarnings("unused")
+			int pairCount = 
+					is.nextInt();
+			Demand demand = new Demand(network);
+			for(int i=0; i<srcCount; i++){
+				int dstCount = is.nextInt();
+				int initNode = is.nextInt();
+				for(int j=0; j<dstCount; j++){
+					int termNode = is.nextInt();
+					double volume = is.nextDouble();
+					ODPair od = new ODPair(initNode, termNode);
+					if(initNode==termNode){
+						if(volume!=0){
+							throw new InvalidDemand(od, volume);
+						}
+					}else{
+						demand.add(od, volume);						
+					}
+				}
+			}
+
+			return demand;
+		}
+		catch(Exception e){
+			
+			throw new InvalidInputException(fileName, is.getLineNumber(), e);
+			
+		}
+	}
+	
+}

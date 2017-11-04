@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/Network" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tn="http://www.example.org/Network" xsi:schemaLocation='http://www.example.org/Network "C:\Users\Saleh\Documents\Xport SN\Code\JTraffic\Network.xsd" '>
+
+    <element name="Network" type="tn:Network"></element>
+    
+    <complexType name="Network">
+    	<sequence>
+    		<all>
+    			<element name="flowModel" type="tn:FlowModel"
+    				maxOccurs="unbounded" minOccurs="1">
+                    <annotation>
+                    	<documentation> Link travel time = free flow time * ( 1 + B * (flow/capacity)^Power )</documentation>
+                    </annotation>
+    			</element>
+    			<element name="costModel" type="tn:CostModel"
+    				maxOccurs="1" minOccurs="1">
+                    <annotation>
+                    	<documentation>Link generalized cost = Link travel time + toll_factor * toll + distance_factor * distance</documentation>
+                    </annotation>
+    			</element>
+    		</all>
+
+    		<element name="link" type="tn:Link" maxOccurs="unbounded"
+    			minOccurs="1">
+    		</element>
+    	</sequence>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="numberOfZones" type="int"></attribute>
+    	<attribute name="numberOfNodes" type="int" use="required"></attribute>
+    	<attribute name="firstThroughNode" type="int"></attribute>
+    	<attribute name="numberOfLinks" type="int" use="required"></attribute>
+    </complexType>
+
+    <complexType name="FlowModel">
+    	<attribute name="id" type="ID"></attribute>
+    	<attribute name="B" type="double"></attribute>
+    	<attribute name="power" type="double"></attribute>
+    </complexType>
+    
+    <complexType name="CostModel">
+    	<attribute name="tollFactor" type="double"></attribute>
+    	<attribute name="distanceFactor" type="double"></attribute>
+    </complexType>
+
+    <complexType name="Link">
+    	<attribute name="initNode" type="int"></attribute>
+    	<attribute name="termNode" type="int"></attribute>
+    	<attribute name="capacity" type="double"></attribute>
+    	<attribute name="length" type="double"></attribute>
+    	<attribute name="toll" type="double"></attribute>
+    	<attribute name="freeFlowTime" type="double"></attribute>
+    	<attribute name="flowModel" type="IDREF"></attribute>
+    	<attribute name="linkType" type="int"></attribute>
+    </complexType>
+</schema>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tn:Network xmlns:tn="http://www.example.org/Network" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="C:\Users\Saleh\Documents\Xport SN\Code\JTraffic\Network.xsd" 
+
+	numberOfZones="24" numberOfNodes="24" firstThroughNode="1" numberOfLinks="76">
+
+	<tn:FlowModel id="flowModel1" B="0.15" power="4" speedLimit="0" toll="0" type="1" />
+	
+	<tn:CostModel tollFactor="0" distanceFactor="0" />
+	
+	<tn:Link initNode="1" termNode="2" capacity="25900.20064" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="1" termNode="3" capacity="23403.47319" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="2" termNode="1" capacity="25900.20064" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="2" termNode="6" capacity="4958.180928" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="3" termNode="1" capacity="23403.47319" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="3" termNode="4" capacity="17110.52372" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="3" termNode="12" capacity="23403.47319" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="4" termNode="3" capacity="17110.52372" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="4" termNode="5" capacity="17782.7941" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="4" termNode="11" capacity="4908.82673" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="5" termNode="4" capacity="17782.7941" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="5" termNode="6" capacity="4947.995469" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="5" termNode="9" capacity="10000" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="6" termNode="2" capacity="4958.180928" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="6" termNode="5" capacity="4947.995469" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="6" termNode="8" capacity="4898.587646" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="7" termNode="8" capacity="7841.81131" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="7" termNode="18" capacity="23403.47319" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="8" termNode="6" capacity="4898.587646" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="8" termNode="7" capacity="7841.81131" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="8" termNode="9" capacity="5050.193156" length="10" freeFlowTime="10" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="8" termNode="16" capacity="5045.822583" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="9" termNode="5" capacity="10000" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="9" termNode="8" capacity="5050.193156" length="10" freeFlowTime="10" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="9" termNode="10" capacity="13915.78842" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="10" termNode="9" capacity="13915.78842" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="10" termNode="11" capacity="10000" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="10" termNode="15" capacity="13512.00155" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="10" termNode="16" capacity="4854.917717" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="10" termNode="17" capacity="4993.510694" length="8" freeFlowTime="8" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="11" termNode="4" capacity="4908.82673" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="11" termNode="10" capacity="10000" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="11" termNode="12" capacity="4908.82673" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="11" termNode="14" capacity="4876.508287" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="12" termNode="3" capacity="23403.47319" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="12" termNode="11" capacity="4908.82673" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="12" termNode="13" capacity="25900.20064" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="13" termNode="12" capacity="25900.20064" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="13" termNode="24" capacity="5091.256152" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="14" termNode="11" capacity="4876.508287" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="14" termNode="15" capacity="5127.526119" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="14" termNode="23" capacity="4924.790605" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="15" termNode="10" capacity="13512.00155" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="15" termNode="14" capacity="5127.526119" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="15" termNode="19" capacity="14564.75315" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="15" termNode="22" capacity="9599.180565" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="16" termNode="8" capacity="5045.822583" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="16" termNode="10" capacity="4854.917717" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="16" termNode="17" capacity="5229.910063" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="16" termNode="18" capacity="19679.89671" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="17" termNode="10" capacity="4993.510694" length="8" freeFlowTime="8" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="17" termNode="16" capacity="5229.910063" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="17" termNode="19" capacity="4823.950831" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="18" termNode="7" capacity="23403.47319" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="18" termNode="16" capacity="19679.89671" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="18" termNode="20" capacity="23403.47319" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="19" termNode="15" capacity="14564.75315" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="19" termNode="17" capacity="4823.950831" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="19" termNode="20" capacity="5002.607563" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="20" termNode="18" capacity="23403.47319" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="20" termNode="19" capacity="5002.607563" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="20" termNode="21" capacity="5059.91234" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="20" termNode="22" capacity="5075.69719299999" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="21" termNode="20" capacity="5059.91234" length="6" freeFlowTime="6" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="21" termNode="22" capacity="5229.910063" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="21" termNode="24" capacity="4885.357564" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="22" termNode="15" capacity="9599.180565" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="22" termNode="20" capacity="5075.69719299999" length="5" freeFlowTime="5" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="22" termNode="21" capacity="5229.910063" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="22" termNode="23" capacity="5000" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="23" termNode="14" capacity="4924.790605" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="23" termNode="22" capacity="5000" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="23" termNode="24" capacity="5078.508436" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="24" termNode="13" capacity="5091.256152" length="4" freeFlowTime="4" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="24" termNode="21" capacity="4885.357564" length="3" freeFlowTime="3" toll="0" flowModel="flowModel1" linkType="1" />
+	<tn:Link initNode="24" termNode="23" capacity="5078.508436" length="2" freeFlowTime="2" toll="0" flowModel="flowModel1" linkType="1" />
+
+</tn:Network>

@@ -1,0 +1,28 @@
+package tn.misc;
+
+import tn.Network;
+
+public class LinkPropertyFunction<T> extends LinkReadOnlyProperty<T> {
+	
+	static public interface Function<T>{
+		public T get(int linkId);
+		public Function<T> clone(Network network);
+	}
+
+	Function<T> function;
+	
+	public LinkPropertyFunction(String name, Network network, Function<T> function) {
+		super(name, network, (T)null);
+		this.function = function;
+	}
+
+	@Override
+	public T get(int linkId) {
+		return function.get(linkId);
+	}
+
+	@Override
+	public LinkReadOnlyProperty<T> clone(Network network) {
+		return new LinkPropertyFunction<T>(name, network, function);
+	}
+}

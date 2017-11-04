@@ -1,0 +1,246 @@
+package tn.test;
+
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
+
+import tn.FlowModel;
+import tn.Network;
+import tn.TrafficNetwork;
+import tn.ODPair;
+import tn.ODPairAssignment;
+import tn.PolynomialFlowModel;
+import tn.Assignment;
+import tn.Demand;
+import tn.Route;
+import tn.Path;
+import tn.algorithm.ShortestPathRouter;
+import tn.err.InvalidPath;
+import tn.io.NetworkReader;
+import tn.misc.LinkDoublePropertyMap;
+import tn.misc.LinkReadOnlyProperty;
+import tn.misc.LinkPropertyMap;
+import tn.vulnerability.*;
+
+public class GameMethod {
+	private TrafficNetwork network;
+	private Demand demand;
+	
+	public void test(){ 
+		init();
+		showNetwork();
+		new Game().run();
+		
+	}
+	
+	private void init(){
+    	
+		Sample sample = new Sample(Sample.NetworkId.SiouxFalls);
+		network = sample.getNetwork();
+		demand = sample.getDemand();
+		
+	}
+	
+	private void showNetwork(){
+		System.out.print(network.toString(new String[]{"FFTTime"}));
+		System.out.print(demand);
+		System.out.print("\n\n");
+		
+	}
+	
+	class Game{
+		public class CostProperty extends LinkReadOnlyProperty<Double> {
+
+			public CostProperty() {
+				super("S-Cost", GameMethod.this.network, 0.0);
+			}
+
+			@Override
+			public Double get(int linkId) {				
+				return Game.this.S.get(linkId);
+			}
+
+			@Override
+			public LinkReadOnlyProperty<Double> clone(Network network) {
+				return this;
+			} 
+		}
+		
+		public class CostTransformer implements Transformer<Integer, Number> {
+
+			@Override
+			public Double transform(Integer linkId) {				
+				return Game.this.S.get(linkId);
+			} 
+		}
+		
+		
+		LinkReadOnlyProperty<Double> costProperty;
+		CostTransformer costTransformer;
+		DijkstraShortestPath<Integer, Integer> algorithm;
+		ShortestPathRouter router;
+		List<Integer> shortestPath;
+		
+		LinkDoublePropertyMap rho, gamma, S, CF, x, rho_n_1;
+		
+		//Assignment h;
+		
+		/**
+		 * 
+		 */
+		final double beta=10;
+		/**
+		 * Aggressiveness of the tester
+		 */
+		final double theta=10;
+		
+		final double epsilon =1e-5;
+
+		double V;
+		double Vn_1;
+		int n;
+
+		private double totalDemandVolume;
+		
+		/**Initialize Game object to process the network and demand in the containing class
+		 * 
+		 */
+		public Game(){
+			totalDemandVolume = demand.getTotal();			
+		}
+		
+		private void init(){
+			costTransformer = new CostTransformer();
+			costProperty = new CostProperty();
+			rho = new LinkDoublePropertyMap("rho", network);
+			gamma = new LinkDoublePropertyMap("gamma", network);
+			S = new LinkDoublePropertyMap("S", network);
+			CF = new LinkDoublePropertyMap("CF", network);
+			//h = new Assignment(network);
+			
+			double initRho = 1.0/network.getLinkCount();
+			for(int link: network.getLinks()){
+				rho.set(link, initRho);
+				gamma.set(link, 0.0);
+			}
+			
+			V = 0;
+			Vn_1 = 1e5;
+			n = 1;
+		}
+		
+		private void beginGame(){
+			for(int link: network.getLinks()){
+				double C_ = network.getFreeFlowTravelTime(link);
+				S.set(link, C_ * (1-rho.get(link))
+						+ beta * C_ * rho.get(link));
+			}
+		}
+		
+		private void calculateShortestPath(){			
+			router = new ShortestPathRouter(network, new CostProperty(), null);
+			
+			Assignment newA = router.route(demand);
+			x = newA.getFlow();
+			//h.combine(newA, (1-1.0/n)); //combine using MSA
+		}
+		
+		private void updateRouteProbability(){
+			for(int link: network.getLinks()){
+				//if(shortestPath.contains(link)){
+					gamma.set(link, (1.0/n) * (x.get(link)/totalDemandVolume) + (1-1.0/n)*gamma.get(link));					
+				//}
+				//else{
+				//	gamma.set(link, (1-1.0/n)*gamma.get(link));
+				//}
+			}
+		}
+		
+		private void updateFailureProbability(){
+			for(int link : network.getLinks()){
+				double C_ = network.getFreeFlowTravelTime(link);
+				if(rho.get(link)>0){
+					CF.set(link, beta*C_);
+				}else{
+					CF.set(link, C_);
+				}
+			}
+
+			LinkDoublePropertyMap qF = 
+					new LinkDoublePropertyMap("gF", network);
+				
+			double Q=0;
+	
+			for(int F:network.getLinks()){
+				
+				double q = Math.exp(theta* gamma.get(F)*CF.get(F)-1);
+				
+				qF.set(F, q); 
+				
+				Q+=q;
+			}
+
+			rho_n_1 = rho.clone();
+
+			for(int link: network.getLinks()){				
+				rho.set(link, qF.get(link)/Q);
+			}
+		}
+		
+		private double error;
+		
+		private void updateVulnerability(){
+			Vn_1 = V;
+			V = 0;
+			for(int link: network.getLinks()){
+				V = V + gamma.get(link) * rho.get(link) * CF.get(link);
+			}
+			
+			
+			error = 0.0;
+			for(int link:network.getLinks()){
+				//error+=Math.abs(rho.get(link)-rho_n_1.get(link));
+			}	
+			error = Math.abs(V - Vn_1);
+		}
+		
+		private void showIteration(){
+			System.out.printf("Iteration #%d\nVulnerability = %f\nFailure Probability = \n%s\nRouter Probability = \n%s\n S-Expected Link Cost= \n%s\n",
+					n, V, rho.toString(), gamma.toString(), S.toString());
+		}
+				
+		private void showResult(){
+			showIteration();
+			System.out.printf("Runtime =%d ms\n", runtime);
+			
+		}
+		
+		long runtime;
+		
+		public void run(){
+			runtime = System.currentTimeMillis();
+
+			init();
+			do{
+				beginGame();
+				showIteration();
+				calculateShortestPath();
+				updateRouteProbability();
+				updateFailureProbability();
+				updateVulnerability();
+				n = n + 1; 
+			}while (error>epsilon);
+			
+			runtime = System.currentTimeMillis()-runtime;
+			
+			showResult();
+		}		
+	}
+	
+    public static void main(String[] args) {
+    	GameMethod networkTest = new GameMethod();
+    	networkTest.test();
+    }	
+}

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/uconn/!svn/ver/96/tnsdo/code/JTraffic/src/tn/algorithm
+END
+FrankWolfeRouter.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/uconn/!svn/ver/96/tnsdo/code/JTraffic/src/tn/algorithm/FrankWolfeRouter.java
+END
+Router.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/uconn/!svn/ver/88/tnsdo/code/JTraffic/src/tn/algorithm/Router.java
+END
+IncrementalRouter.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/uconn/!svn/ver/88/tnsdo/code/JTraffic/src/tn/algorithm/IncrementalRouter.java
+END
+ShortestPathRouter.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/uconn/!svn/ver/88/tnsdo/code/JTraffic/src/tn/algorithm/ShortestPathRouter.java
+END
+Dijkstra.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/uconn/!svn/ver/94/tnsdo/code/JTraffic/src/tn/algorithm/Dijkstra.java
+END
+IterativeRouter.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/uconn/!svn/ver/91/tnsdo/code/JTraffic/src/tn/algorithm/IterativeRouter.java
+END

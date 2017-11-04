@@ -1,0 +1,78 @@
+	/** Directed link from one node to another, has a capacity and optimal travel time 
+	 */
+	public class Link {		
+
+		/** link id
+		 */
+		private int id; 
+
+		/** from node id
+		 */
+		private int from;
+		
+		/** to node id
+		 */
+		private int to;
+		
+		/** capacity: the maximum throughput in cars per minute
+		 */
+		private double capacity;
+		
+		/** travel distance
+		 */
+		private double distance;
+		
+		/** ideal travel time, when flow tends to zero
+		 */
+		private double freeFlowTravelTime;
+
+		/**Flow model that applies to the link
+		 */
+		private FlowModel flowModel;
+		
+		@SuppressWarnings("unused")
+		private double speed;
+		
+		private double toll;
+		
+		@SuppressWarnings("unused")
+		private int linkType;
+		
+		/*
+		 * currently assigned load
+		 */
+		private double flow;
+		
+		/*
+		 * the link id within the containing network
+		 */
+		public int getId(){
+			return id;
+		}
+		
+
+		@Override
+		public boolean equals(Object obj) {
+			Link l = (Link)obj;
+			if(l==null) return false;
+			return this.from==l.from && this.to==l.to;
+		}
+
+		@Override
+		public int hashCode() {
+			//to support multiple links sharing the same origin and destination
+			//we use the id instead of (from,to) to identify the link
+			// return from*nodeCount + to;
+			return id;
+		}
+
+		public void resetFlow(double y) {
+			this.flow = y;
+			
+		}
+
+		public boolean isCongested() {
+			return capacity<flow;
+		}
+	}
+	

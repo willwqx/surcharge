@@ -1,0 +1,113 @@
+package tn.misc;
+
+import java.util.HashMap;
+import java.util.Set;
+
+import tn.Network;
+
+public class LinkPropertyMap<T> extends LinkProperty<T> {
+
+
+	/**
+	 * Link property internal storage
+	 */
+	protected HashMap<java.lang.Integer, T> map;
+
+	
+	
+	/**Standard constructor: Initialize {@link LinkPropertyMap} object
+	 * @param network the network with which this property is associated
+	 * @param defaultValue default value of property. 
+	 */
+	public LinkPropertyMap(String name, Network network, T defaultValue) {
+		super(name, network, defaultValue);
+		map = new HashMap<java.lang.Integer, T>(network.getLinkCount());
+	}
+
+	/**Copy constructor
+	 * @param sourceMap property to copy
+	 */
+	public LinkPropertyMap(LinkReadOnlyProperty<T> sourceMap) {
+		super(sourceMap);
+		map = new HashMap<Integer, T>(network.getLinkCount());
+		for(int i:network.getLinks()){
+			if(sourceMap.get(i)!=defaultValue)
+				map.put(i, sourceMap.get(i));
+		}
+	}
+
+	/**Copy constructor: Initialize {@link LinkPropertyMap} object using the 
+	 * content of another {@link LinkPropertyMap} object.
+	 * @param other the other {@link LinkPropertyMap} to be copied
+	 */
+	public LinkPropertyMap(LinkPropertyMap<T> other){
+		super(other.getName(), other.network, other.defaultValue);
+		map = new HashMap<java.lang.Integer, T>(other.map);
+	}
+
+	/**Copy constructor to a different network
+	 * @param network new network
+	 * @param sourceMap property to copy
+	 */
+	public LinkPropertyMap(Network network, LinkReadOnlyProperty<T> sourceMap) {
+		super(sourceMap.getName(), network, sourceMap.defaultValue);
+		map = new HashMap<Integer, T>(network.getLinkCount());
+		for(int i:network.getLinks()){
+			if(sourceMap.get(i)!=defaultValue)
+				map.put(i, sourceMap.get(i));
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see tn.LinkReadOnlyProperty#get(int)
+	 */
+	@Override
+	public T get(int linkId) {
+		if(map.containsKey(linkId))
+			return map.get(linkId);
+		else
+			return defaultValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see tn.LinkProperty#set(int, java.lang.Object)
+	 */
+	@Override
+	public void set(int linkId, T value) {
+		if(value.equals(defaultValue))
+			map.remove(linkId);
+		else
+			map.put(linkId, value);
+	}
+
+	/**Update the link property values from the given map. 
+	 * Links that do not have a mapping in the given map remain unchanged.
+	 * @param other source of link property values
+	 * @return this LinkPropertyMap after being updated 
+	 */
+	public void set(LinkPropertyMap<T> other){
+		map.putAll(other.map);
+	}
+					
+	/* (non-Javadoc)
+	 * @see tn.misc.LinkProperty#reset()
+	 */
+	@Override
+	public void reset() {
+		map.clear();
+	}
+
+	@Override
+	public LinkPropertyMap<T> clone() {
+		return new LinkPropertyMap<T>(this);
+	}
+
+	@Override
+	public LinkPropertyMap<T> clone(Network network) {
+		return new LinkPropertyMap<T>(network, this);
+	}
+	
+	public Set<Integer> getNonDefaultLinkIdSet(){
+		return map.keySet();
+	}
+}

@@ -1,0 +1,76 @@
+package tn.misc;
+
+import java.util.Set;
+
+import tn.Network;
+
+/**
+ * A property that can be scaled using a factor map
+ */
+public class ScaledLinkProperty extends LinkReadOnlyProperty<Double>{
+
+	/**
+	 * The factor map
+	 */
+	LinkPropertyMap<Double> factorMap;
+	
+	/**
+	 * The original property that is to be disrupted
+	 */
+	LinkReadOnlyProperty<Double> originalProperty;
+
+	public ScaledLinkProperty(LinkReadOnlyProperty<Double> originalProperty) {
+		super(originalProperty.getName().concat("-Scaled"), originalProperty.getNetwork(), 0.0);
+		factorMap = new LinkPropertyMap<Double>(originalProperty.getName().concat("-Factor"), originalProperty.getNetwork(), 1.0);
+		this.originalProperty = originalProperty;
+	}
+
+	/* (non-Javadoc)
+	 * @see tn.misc.LinkPropertyMap#get(int)
+	 */
+	@Override
+	public Double get(int linkId) {
+		return factorMap.get(linkId) * originalProperty.get(linkId);
+	}
+
+	@Override
+	public ScaledLinkProperty clone() {
+		return new ScaledLinkProperty(originalProperty);
+	}
+
+	@Override
+	public ScaledLinkProperty clone(Network network) {
+		return new ScaledLinkProperty(originalProperty.clone(network));
+	}
+	/**
+	 * @return the set of links whose factor is not 1.0 
+	 */
+	public Set<Integer> getScaledLinks() {
+		return factorMap.getNonDefaultLinkIdSet();
+	}
+	
+	/**
+	 * Set the factor for the given link to the given factor 
+	 * @param linkId
+	 * @param factor
+	 */
+	public void disrupt(int linkId, double factor){
+		factorMap.set(linkId, factor);
+	}
+	
+	/**
+	 * Reset the factor of the given link to 1.0
+	 * @param linkId
+	 */
+	public void reset(int linkId){
+		factorMap.set(linkId, 1.0);
+	}
+	
+	/**
+	 * Reset the factor of all links to 1.0
+	 */
+	public void reset(){
+		factorMap.reset();
+	}
+}
+
