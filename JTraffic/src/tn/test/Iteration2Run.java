@@ -24,7 +24,7 @@ public class Iteration2Run {
 	//long runtime;
 	private PrintWriter TFile;
 	private PrintWriter linkflowFile;
-	private PrintWriter sFile; /*S-expect value */
+	private PrintWriter sFile; /* S-expect value */
 		
 	public static void main(String[] args) {
 		Iteration2Run iteration2run = new Iteration2Run();
@@ -38,7 +38,7 @@ public class Iteration2Run {
 		demand = testNetwork.getDemand();
 		//LinkDoublePropertyMap S;
 		//S = new LinkDoublePropertyMap("S", trafficNetwork);
-		new Surcharge().run();	
+		new Surcharge().run();
 		
 	}
 	

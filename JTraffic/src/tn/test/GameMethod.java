@@ -27,7 +27,7 @@ public class GameMethod {
 	private PrintWriter routerProbFile;
 	private PrintWriter TFile;
 	private PrintWriter linkflowFile;
-	private PrintWriter sFile;/*S-expect value*/
+	private PrintWriter sFile;/*S-expect value */
 	/**
 	 * Initializes the network.<br />
 	 * Displays the {@link TrafficNetwork}.<br />
