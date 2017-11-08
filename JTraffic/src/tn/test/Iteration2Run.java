@@ -33,7 +33,7 @@ public class Iteration2Run {
 	
 	public void process(){
 		
-		TestNetwork testNetwork = new TestNetwork(TestNetwork.NetworkId.SiouxFalls);
+		TestNetwork testNetwork = new TestNetwork(TestNetwork.NetworkId.SiouxFalls16demand);
 		trafficNetwork = testNetwork.getNetwork();
 		demand = testNetwork.getDemand();
 		//LinkDoublePropertyMap S;
@@ -46,11 +46,12 @@ public class Iteration2Run {
 
 		long runtime;  /* stores algorithm running time */
 		
-		LinkDoublePropertyMap                 T;  /* total travel cost ( time cost + surcharge) for every link in network */
-		LinkDoublePropertyMap             Tlast;  /* total travel cost ( time cost + surcharge) in last iteration for every link */
+		LinkDoublePropertyMap                 linkToll;  /* total travel cost ( time cost + surcharge) for every link in network */
+		LinkDoublePropertyMap             linkToll_last;  /* total travel cost ( time cost + surcharge) in last iteration for every link */
 		LinkDoublePropertyMap 	     travelTime;  /* Travel time cost for every link */
 		LinkDoublePropertyMap  linkMarginalCost;  /* marginal cost for every link */
 		LinkDoublePropertyMap        linkVolume;  /* traffic along each link (flow) */
+		LinkDoublePropertyMap     linkVolumeOrg;  /* Link volume before surcharge */
 		LinkDoublePropertyMap       linkFFTTime;  /* free flow travel time along each link */
 		LinkDoublePropertyMap    linkCapacities;  /* total capacity on each link */
 		
@@ -62,8 +63,8 @@ public class Iteration2Run {
 		
 		int n = 1;  /* number of iterations completed so far */
 		
-		double   toll;  /* current toll */
-		double toll_1;  /* last toll */
+		double sumToll;  /* current iteration sum sum of all links toll */
+		double sumToll_1;  /* last current iteration sum of all links toll */
 		
 		/**
 		 * Implementation of the Surcharge algorithm.
@@ -98,7 +99,7 @@ public class Iteration2Run {
 			
 			do {
 				showIteration();
-				computeMSACosts();
+		
 				//updateDemandProb();
 				try{
 					UEAssignment();
@@ -106,7 +107,8 @@ public class Iteration2Run {
 					e.printStackTrace();
 				}
 				computeTravelTimeCost();
-		    	computeEdgeToll();
+		    	computeMarginalCost();
+		    	calLinkToll();
 		    	//updateRouteProb();
 		    	updateDemand();
 				//newDemandProb();
@@ -155,8 +157,10 @@ public class Iteration2Run {
 						double routeTotalCost = 0;
 						double routeMarginalCost = 0;
 						for(int link : proute.getLinks()) {
-							routeTotalCost += T.get(link);
-							routeMarginalCost += linkMarginalCost.get(link);
+							//routeTotalCost += getTravelTimeCost(link);  		//old version
+							routeTotalCost += getOrigTravelCost(link);
+							//routeMarginalCost += linkMarginalCost.get(link);  //old version
+							routeMarginalCost += linkToll.get(link);
 						}
 						
 						/* Calculate residual cost (residualCost) for each pair */
@@ -164,7 +168,7 @@ public class Iteration2Run {
 						
 						/* Estimate new demand needed to attain given residual cost */
 						int volume = 0;
-						double estResidualCost = 0;
+						double estResidualCost = Double.NEGATIVE_INFINITY;
 						do {
 							estResidualCost = 0;
 							for(int link : proute.getLinks())
@@ -174,6 +178,8 @@ public class Iteration2Run {
 						volume -= 1;
 						
 						/* Update demand with new demand */
+						// BUGS? Route residual cost is negative??
+						System.out.println(p + " : " + "route total cost=" + routeTotalCost + ", route marginal cost=" + routeMarginalCost + " : " + demand.get(p) + " -> " + volume);
 						demand.set(p, volume);
 					}
 				}
@@ -184,8 +190,8 @@ public class Iteration2Run {
 		 * Initializes all local variables to default values. 
 		 */
 		private void init() {
-			T = new LinkDoublePropertyMap("T", trafficNetwork);
-			Tlast = new LinkDoublePropertyMap("T_1", trafficNetwork);
+			linkToll = new LinkDoublePropertyMap("T", trafficNetwork);
+			linkToll_last = new LinkDoublePropertyMap("T_1", trafficNetwork);
 			linkMarginalCost = new LinkDoublePropertyMap("S", trafficNetwork);
 			linkFFTTime = new LinkDoublePropertyMap("FFTTime", trafficNetwork);
 			linkCapacities = new LinkDoublePropertyMap("capacity", trafficNetwork);
@@ -193,7 +199,7 @@ public class Iteration2Run {
 			linkVolume = new LinkDoublePropertyMap("linkFlows", trafficNetwork);
 			
 			for(int link: trafficNetwork.getLinks()) {
-				T.set(link,trafficNetwork.getTravelTime(link));
+				linkToll.set(link,trafficNetwork.getTravelTime(link));
 				linkFFTTime.set(link, trafficNetwork.getFreeFlowTravelTime(link));
 				linkCapacities.set(link, trafficNetwork.getCapacity(link));
 			}
@@ -201,16 +207,16 @@ public class Iteration2Run {
 		
 		private void showIteration() {
 			//System.out.printf("*** %s \n", T.get(1));
-			TFile.printf("%d%s\n", n, T.toRowString());
+			TFile.printf("%d%s\n", n, linkToll.toRowString());
 			linkflowFile.printf("%d%s\n", n, linkVolume.toRowString());
 			sFile.printf("%d%s\n", n, linkMarginalCost.toRowString());
 		}
 		
 		/**
-		 * Compute the measure of successful average (MSA) for the current iteration.
+		 * Compute the measure of successful average (MSA) toll for the current iteration.
 		 */
-		private void computeMSACosts() {
-			if(n == 1){
+		private void calLinkToll() {
+			/*if(n == 1){
 				Tlast = linkFFTTime.clone();
 				T = Tlast.clone();
 			}else{ 
@@ -219,6 +225,16 @@ public class Iteration2Run {
 					T.set(link, (1/n)*linkMarginalCost.get(link)+(1-1/n)*Tlast.get(link));
 				}
 				Tlast = T.clone();
+			}*/
+			if(n == 1){
+				linkToll = linkFFTTime.clone();
+				linkToll_last = linkToll.clone();
+			}
+			else{ 
+				for(int link: trafficNetwork.getLinks()) {
+					linkToll.set(link, (1/n)*(linkMarginalCost.get(link) )+(1-1/n)*linkToll_last.get(link)); // GeneralCost = Marginal cost + travel time cost 
+					}
+				linkToll_last = linkToll.clone();
 			}
 		}
 		
@@ -233,6 +249,21 @@ public class Iteration2Run {
 					travelTime.set(link, getTravelTimeCost(link));
 				}
 			}
+		}
+		
+		/*private void originalTravelCost() {
+			if(n == 1){
+				travelTime = linkFFTTime.clone();
+			}else{
+				for(int link: trafficNetwork.getLinks()) {
+					travelTime.set(link, getOrigTravelCost(link));
+				}
+			}
+		}*/
+		
+		private double getOrigTravelCost(int linkid) {
+			double volume = linkVolumeOrg.get(linkid);
+			return getTravelTimeCost(linkid, volume);
 		}
 		
 		/**
@@ -262,7 +293,7 @@ public class Iteration2Run {
 				double tolerance = 1e-4;
 				FileOutputStream out = new FileOutputStream("FrankWolfeOuput.txt");
 				PrintStream printStream = new PrintStream(out);
-				router = new FrankWolfeRouter(tolerance, T, printStream);
+				router = new FrankWolfeRouter(tolerance, linkToll, printStream);
 				//router = new FrankWolfeRouterMSA(tolerance, printStream,T);//this just the part of try..  catch...
 				//router = new IncrementalRouter(trafficNetwork, tolerance, printStream);
 			}catch(Exception e) {
@@ -275,6 +306,9 @@ public class Iteration2Run {
 	    	
 			Assignment newA = router.route(demand);
 			linkVolume = newA.getFlow();
+			if (n == 1){
+			  linkVolumeOrg = newA.getFlow();}
+			 
 			//linkTimeCost = BPR;
 		}
 		
@@ -282,12 +316,12 @@ public class Iteration2Run {
 		 * Compute marginal cost for each link in the network.
 		 * This is stored in the variable 'S'.
 		 */
-		private void computeEdgeToll() {
+		private void computeMarginalCost() {
 			for(int link: trafficNetwork.getLinks()){
 				double FFTT = trafficNetwork.getFreeFlowTravelTime(link);
 				double Vol = linkVolume.get(link);
 				double Cap = trafficNetwork.getCapacity(link); 
-				linkMarginalCost.set(link, FFTT + Vol * FFTT * (4 * Math.pow(Vol,3) * 0.15 / Math.pow(Cap,4))); //S.set(link, Vol * FFTT * (4 * Math.pow(Vol,3) * 0.15 / Math.pow(Cap,4)));
+				linkMarginalCost.set(link, Vol * FFTT * (4 * Math.pow(Vol,3) * 0.15 / Math.pow(Cap,4))); //S.set(link, Vol * FFTT * (4 * Math.pow(Vol,3) * 0.15 / Math.pow(Cap,4)));
 			}
 		}
 		
@@ -296,12 +330,13 @@ public class Iteration2Run {
 		 * This is used to determine when the algorithm should terminate.
 		 */
 		private void computeTollDiff() {
-			toll_1 = toll;
-			toll = 0;
+			sumToll_1 = 0;
+			sumToll = 0;
 			for(int link: trafficNetwork.getLinks()) {
-				toll = toll + linkMarginalCost.get(link);
+				sumToll += linkMarginalCost.get(link);
 			}
-			error = Math.abs(toll - toll_1);
+			error = Math.abs(sumToll - sumToll_1);
+			sumToll_1 = sumToll;
 		}
 		
 		/**
@@ -323,7 +358,7 @@ public class Iteration2Run {
 		 * Compute the shortest paths between all OD pairs.
 		 */
 		private Assignment calculateShortestPath() {			
-			shortestroute = new ShortestPathRouter(trafficNetwork, T, null);
+			shortestroute = new ShortestPathRouter(trafficNetwork, linkToll, null);
 			Assignment newA = shortestroute.route(demand);
 			return newA;
 		}
